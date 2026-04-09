@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ISL Words</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #ffffff;
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 32px;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+        font-weight: 700;
+      }
+      }
+
+      p.sub {
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .back-btn {
+        display: inline-block;
+        margin-bottom: 2rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+      }
+
+      .alphabet-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .alpha-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 2px solid #cbd5e1;
+        background: rgba(255, 255, 255, 0.85);
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        color: #667eea;
+      }
+
+      .alpha-btn:hover {
+        border-color: #667eea;
+        background: rgba(240, 244, 255, 0.9);
+        transform: scale(1.08);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+      }
+
+      .alpha-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: transparent;
+        box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        transform: scale(1.15);
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 28px;
+      }
+
+      .sign-panel {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        padding: 2rem;
+        text-align: center;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+        backdrop-filter: blur(20px);
+      }
+
+      .sign-panel img {
+        width: 100%;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.15);
+      }
+
+      .sign-letter {
+        font-size: 56px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+      }
+
+      .sign-gujarati {
+        font-size: 40px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 1.5rem;
+        font-weight: 700;
+      }
+
+      .speak-btns {
+        display: flex;
+        gap: 10px;
+        margin-top: 1.5rem;
+      }
+
+      .speak-btn {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .speak-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+      }
+
+      .words-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 16px;
+        align-content: start;
+      }
+
+      .word-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        perspective: 1000px;
+        transform-style: preserve-3d;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .word-card:hover {
+        transform: translateY(-12px) translateZ(20px);
+        box-shadow: 0 16px 45px rgba(102, 126, 234, 0.25);
+        border-color: rgba(102, 126, 234, 0.4);
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.98),
+          rgba(240, 244, 255, 0.95)
+        );
+      }
+
+      .word-card.flipped {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border-color: rgba(16, 185, 129, 0.4);
+      }
+
+      .word-emoji {
+        font-size: 48px;
+        margin-bottom: 0.75rem;
+        transition: transform 0.3s ease;
+      }
+
+      .word-card:hover .word-emoji {
+        transform: scale(1.15) rotate(5deg);
+      }
+
+      .word-gujarati {
+        font-size: 22px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 0.5rem;
+      }
+
+      .word-english {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      .word-hint {
+        font-size: 12px;
+        color: #059669;
+        margin-top: 1rem;
+        display: none;
+        line-height: 1.4;
+        font-style: italic;
+      }
+
+      .word-card.flipped .word-hint {
+        display: block;
+      }
+
+      .word-sound-btns {
+        display: flex;
+        gap: 8px;
+        margin-top: 1.25rem;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .word-sound-btn {
+        flex: 1;
+        padding: 0.5rem;
+        border: none;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(245, 87, 108, 0.2);
+      }
+
+      .word-sound-btn:hover {
+        transform: scale(1.08);
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+      }
+
+      .tap-label {
+        text-align: center;
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        padding: 0.75rem;
+        border: 1px solid rgba(102, 126, 234, 0.2);
+      }
+
+      @media (max-width: 900px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+        .sign-panel {
+          position: static;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📖 ISL Words Module</h1>
+      <p class="sub">Learn Gujarati words for each ISL alphabet</p>
+      <a href="/" class="back-btn">← Back to Predictor</a>
+
+      <div class="alphabet-bar" id="alpha-bar">
+        {% for letter in gujarati_words.keys() %}
+        <button
+          class="alpha-btn {% if loop.first %}active{% endif %}"
+          onclick="selectLetter('{{ letter }}')"
+          id="btn-{{ letter }}"
+          title="Letter {{ letter }}"
+        >
+          {{ letter }}
+        </button>
+        {% endfor %}
+      </div>
+
+      <div class="content">
+        <div class="sign-panel">
+          <img
+            id="sign-img"
+            src="/static/signs/A.jpg"
+            alt="ISL Sign"
+            onerror="this.style.display = 'none'"
+          />
+          <div class="sign-letter" id="sign-letter">A</div>
+          <div class="sign-gujarati" id="sign-gujarati">અ</div>
+          <div class="speak-btns">
+            <button
+              class="speak-btn"
+              onclick="
+                speak(
+                  document.getElementById('sign-letter').textContent,
+                  'en-IN',
+                )
+              "
+            >
+              🔊 English
+            </button>
+            <button
+              class="speak-btn"
+              onclick="
+                speak(
+                  document.getElementById('sign-gujarati').textContent,
+                  'gu-IN',
+                )
+              "
+            >
+              🔊 ગુજરાતી
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <p class="tap-label">💡 Tap a word card to flip and see the hint</p>
+          <div class="words-grid" id="words-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const allWords = {{ gujarati_words | tojson }};
+
+      const gujarati_letters = {
+        'A':'અ','B':'બ','C':'ક','D':'ડ','E':'એ','F':'ફ','G':'ગ',
+        'H':'હ','I':'ઇ','J':'જ','K':'ક','L':'લ','M':'મ','N':'ન',
+        'O':'ઓ','P':'પ','Q':'ક','R':'ર','S':'સ','T':'ત','U':'ઉ',
+        'V':'વ','W':'વ','X':'ક્સ','Y':'વાય','Z':'ઝ'
+      };
+
+      const hints = {
+        'Mango':'આંબો એ ભારતનું રાષ્ટ્રીય ફળ છે',
+        'Sky':'આકાશ વાદળી રંગનું છે',
+        'Eye':'આંખ જોવા માટે છે',
+        'Ox':'બળદ ખેતીમાં મદદ કરે છે',
+        'Window':'બારીમાંથી પ્રકાશ આવે છે',
+        'Garden':'બગીચામાં ફૂલ ઉગે છે',
+        'Moon':'ચંદ્ર રાત્રે ચમકે છે',
+        'Book':'ચોપડીમાં જ્ઞાન છે',
+        'Tea':'ચા ગરમ પીવાય છે',
+        'Cow':'ગાય દૂધ આપે છે',
+        'Rose':'ગુલાબ સુંદર ફૂલ છે',
+        'Hand':'હાથ વડે કામ કરીએ',
+        'Heart':'હૃદય શરીરનું મહત્વનું અંગ છે',
+        'Elephant':'હાથી મોટો પ્રાણી છે',
+        'Water':'પાણી જીવન છે',
+        'Sun':'સૂર્ય ઊર્જા આપે છે',
+        'Star':'તારો રાત્રે ચમકે છે',
+        'Tree':'વૃક્ષ ઓક્સિજન આપે છે',
+      };
+
+      // Load available voices
+      let availableVoices = [];
+      window.speechSynthesis.onvoiceschanged = () => {
+        availableVoices = window.speechSynthesis.getVoices();
+      };
+
+      function getBestVoice(lang) {
+        // Try exact match first
+        let voice = availableVoices.find(v => v.lang === lang);
+        if (voice) return voice;
+
+        // Try language prefix match (e.g. 'gu' from 'gu-IN')
+        const prefix = lang.split('-')[0];
+        voice = availableVoices.find(v => v.lang.startsWith(prefix));
+        if (voice) return voice;
+
+        // Fallback chain for Gujarati → Hindi → any Indian → null
+        if (lang === 'gu-IN') {
+          voice = availableVoices.find(v => v.lang === 'hi-IN');
+          if (voice) return voice;
+          voice = availableVoices.find(v => v.lang.includes('IN'));
+          if (voice) return voice;
+        }
+
+        return null;
+      }
+
+      function speak(text, lang) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = lang;
+        utter.rate = 0.6;
+        utter.pitch = 1;
+
+        const voice = getBestVoice(lang);
+        if (voice) utter.voice = voice;
+
+        window.speechSynthesis.speak(utter);
+      }
+
+      let currentLetter = 'A';
+
+      function selectLetter(letter) {
+        currentLetter = letter;
+
+        document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${letter}`).classList.add('active');
+
+        const img = document.getElementById('sign-img');
+        img.src = `/static/signs/${letter}.jpg`;
+        img.style.display = 'block';
+        document.getElementById('sign-letter').textContent = letter;
+        document.getElementById('sign-gujarati').textContent = gujarati_letters[letter] || '';
+
+        // Auto speak letter name when switching
+        speak(letter, 'en-IN');
+
+        const grid = document.getElementById('words-grid');
+        grid.innerHTML = '';
+        const words = allWords[letter] || [];
+
+        words.forEach(([gujarati, english, emoji]) => {
+          const hint = hints[english] || gujarati + ' = ' + english;
+          const card = document.createElement('div');
+          card.className = 'word-card';
+          card.innerHTML = `
+            <div class="word-emoji">${emoji}</div>
+            <div class="word-gujarati">${gujarati}</div>
+            <div class="word-english">${english}</div>
+            <div class="word-hint">${hint}</div>
+            <div class="word-sound-btns">
+              <button class="word-sound-btn"
+                onclick="event.stopPropagation(); speak('${english}', 'en-IN')"
+                title="Pronounce in English">
+                🔊 EN
+              </button>
+              <button class="word-sound-btn"
+                onclick="event.stopPropagation(); speak('${gujarati}', 'gu-IN')"
+                title="Pronounce in Gujarati">
+                🔊 ગુ
+              </button>
+            </div>
+          `;
+          card.onclick = () => card.classList.toggle('flipped');
+          grid.appendChild(card);
+        });
+      }
+
+      selectLetter('A');
+    </script>
+  </body>
+</html>

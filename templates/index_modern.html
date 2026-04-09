@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ISL Sign Language Predictor</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #ffffff;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 28px;
+        padding: 3rem;
+        max-width: 550px;
+        width: 100%;
+        box-shadow:
+          0 20px 60px rgba(0, 0, 0, 0.15),
+          0 0 1px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+      }
+
+      h1 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+      }
+
+      p.sub {
+        color: #64748b;
+        font-size: 15px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 2rem;
+      }
+
+      .nav-links a {
+        display: block;
+        text-align: center;
+        padding: 0.75rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .nav-links a::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        transition: left 0.5s;
+      }
+
+      .nav-links a:hover::before {
+        left: 100%;
+      }
+
+      .nav-links a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+      }
+
+      .upload-area {
+        border: 2px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 2.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      }
+
+      .upload-area:hover {
+        border-color: #667eea;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+        box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15);
+      }
+
+      .upload-area p {
+        color: #64748b;
+        font-weight: 600;
+        margin: 0;
+      }
+
+      #preview {
+        max-width: 100%;
+        border-radius: 12px;
+        margin: 1rem 0;
+        display: none;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+      }
+
+      button {
+        width: 100%;
+        padding: 0.9rem;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .result {
+        margin-top: 1.5rem;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border-radius: 16px;
+        display: none;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        animation: slideIn 0.4s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .letter {
+        font-size: 56px;
+        font-weight: 700;
+        color: #059669;
+        text-align: center;
+        margin-bottom: 0.5rem;
+      }
+
+      .confidence {
+        text-align: center;
+        color: #047857;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .gujarati {
+        text-align: center;
+        font-size: 24px;
+        margin-top: 0.75rem;
+        color: #065f46;
+        font-weight: 600;
+      }
+
+      .error {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #b91c1c;
+        padding: 1.5rem;
+        border-radius: 16px;
+        margin-top: 1.5rem;
+        display: none;
+        font-size: 15px;
+        font-weight: 500;
+        border: 1px solid rgba(220, 38, 38, 0.3);
+        animation: slideIn 0.4s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>🤟 ISL Sign Predictor</h1>
+      <p class="sub">Upload a hand sign image to detect the ISL alphabet</p>
+
+      <div class="nav-links">
+        <a href="/dashboard">📊 My Progress</a>
+      </div>
+
+      <div
+        class="upload-area"
+        onclick="document.getElementById('fileInput').click()"
+      >
+        <p>📁 Click to upload image or drag & drop</p>
+        <img id="preview" alt="preview" />
+      </div>
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/*"
+        style="display: none"
+        onchange="previewImage(event)"
+      />
+
+      <button onclick="predict()">🔍 Predict Sign</button>
+
+      <div class="result" id="result">
+        <div class="letter" id="letterOut"></div>
+        <div class="confidence" id="confOut"></div>
+        <div class="gujarati" id="gujaratiOut"></div>
+      </div>
+      <div class="error" id="error"></div>
+
+      <div class="nav-links" style="margin-top: 2rem">
+        <a href="/learn">📚 Learn ISL Alphabets</a>
+        <a href="/practice">✋ Practice Mode</a>
+        <a href="/words">📖 Words Module</a>
+      </div>
+    </div>
+
+    <script>
+      function previewImage(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = document.getElementById("preview");
+          img.src = ev.target.result;
+          img.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+      }
+
+      async function predict() {
+        const file = document.getElementById("fileInput").files[0];
+        if (!file) {
+          alert("Please upload an image first");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("image", file);
+
+        try {
+          const res = await fetch("/predict", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await res.json();
+
+          if (data.error) {
+            document.getElementById("error").textContent = data.error;
+            document.getElementById("error").style.display = "block";
+            document.getElementById("result").style.display = "none";
+          } else {
+            document.getElementById("letterOut").textContent = data.letter;
+            document.getElementById("confOut").textContent =
+              `Confidence: ${data.confidence}%`;
+            document.getElementById("gujaratiOut").textContent =
+              data.gujarati_word;
+            document.getElementById("result").style.display = "block";
+            document.getElementById("error").style.display = "none";
+          }
+        } catch (e) {
+          document.getElementById("error").textContent =
+            "Prediction failed. Try again.";
+          document.getElementById("error").style.display = "block";
+        }
+      }
+    </script>
+  </body>
+</html>

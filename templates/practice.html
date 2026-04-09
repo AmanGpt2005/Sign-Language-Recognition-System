@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ISL Practice Mode</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #ffffff;
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 32px;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+        font-weight: 700;
+      }
+      }
+
+      p.sub {
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .back-btn {
+        display: inline-block;
+        margin-bottom: 2rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(67, 233, 123, 0.6);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+      }
+
+      /* Target letter display */
+      .target-label {
+        font-size: 14px;
+        color: #64748b;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .target-letter {
+        font-size: 96px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+      }
+
+      .target-gujarati {
+        font-size: 42px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0.75rem 0;
+        font-weight: 700;
+      }
+
+      .target-word {
+        font-size: 15px;
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+      }
+
+      .target-img {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(67, 233, 123, 0.2);
+      }
+
+      /* Webcam side */
+      #webcam-box {
+        position: relative;
+      }
+
+      video {
+        width: 100%;
+        border-radius: 16px;
+        background: #000;
+        display: block;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      canvas {
+        display: none;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 0.9rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+      }
+
+      .btn-next {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        color: white;
+        display: none;
+        box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+      }
+
+      .btn-next:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(67, 233, 123, 0.6);
+      }
+
+      .btn-skip {
+        background: rgba(226, 232, 240, 0.7);
+        color: #64748b;
+        border: none;
+        margin-top: 0.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-skip:hover {
+        background: rgba(226, 232, 240, 0.9);
+      }
+
+      /* Result */
+      #result {
+        margin-top: 1rem;
+        padding: 1.5rem;
+        border-radius: 16px;
+        font-size: 18px;
+        font-weight: 700;
+        display: none;
+        text-align: center;
+        animation: slideUp 0.3s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #result.correct {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        color: #059669;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+
+      #result.wrong {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #b91c1c;
+        border: 1px solid rgba(220, 38, 38, 0.3);
+      }
+
+      #result.nohand {
+        background: linear-gradient(135deg, #fef3c7 0%, #fcd34d 100%);
+        color: #92400e;
+      }
+
+      /* Score bar */
+      .score-bar {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        margin-bottom: 2rem;
+      }
+
+      .score-item {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 1.5rem;
+        min-width: 140px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+      }
+
+      .score-num {
+        font-size: 36px;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .score-label {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .score-correct .score-num {
+        color: #059669;
+      }
+      .score-wrong .score-num {
+        color: #b91c1c;
+      }
+      .score-total .score-num {
+        color: #667eea;
+      }
+
+      /* Progress dots */
+      .progress {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+        margin-bottom: 2rem;
+      }
+
+      .dot {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #64748b;
+        transition: all 0.2s ease;
+      }
+
+      .dot.correct {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        color: white;
+      }
+
+      .dot.wrong {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        color: white;
+      }
+
+      .dot.current {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+      }
+
+      @media (max-width: 768px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        .score-bar {
+          flex-wrap: wrap;
+          gap: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>✋ ISL Practice Mode</h1>
+      <p class="sub">Sign the letter shown and hold steady to check</p>
+      <a href="/" class="back-btn">← Back to Predictor</a>
+
+      <!-- Score -->
+      <div class="score-bar">
+        <div class="score-item score-correct">
+          <div class="score-num" id="score-correct">0</div>
+          <div class="score-label">Correct</div>
+        </div>
+        <div class="score-item score-wrong">
+          <div class="score-num" id="score-wrong">0</div>
+          <div class="score-label">Wrong</div>
+        </div>
+        <div class="score-item score-total">
+          <div class="score-num" id="score-total">0</div>
+          <div class="score-label">Total</div>
+        </div>
+      </div>
+
+      <!-- Progress dots -->
+      <div class="progress" id="progress"></div>
+
+      <!-- Main layout -->
+      <div class="layout">
+        <!-- Target -->
+        <div class="card">
+          <div class="target-label">📌 Sign this letter:</div>
+          <div class="target-letter" id="target-letter">A</div>
+          <div class="target-gujarati" id="target-gujarati">અ</div>
+          <div class="target-word" id="target-word"></div>
+          <img
+            id="target-img"
+            class="target-img"
+            src=""
+            alt="ISL sign reference"
+            onerror="this.style.display = 'none'"
+          />
+        </div>
+
+        <!-- Webcam -->
+        <div class="card" id="webcam-box">
+          <div style="position: relative">
+            <video id="video" autoplay playsinline></video>
+            <!-- Status overlay -->
+            <div
+              id="status-overlay"
+              style="
+                position: absolute;
+                bottom: 12px;
+                left: 0;
+                right: 0;
+                text-align: center;
+                font-size: 14px;
+                font-weight: 600;
+                color: white;
+                text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+                padding: 8px;
+              "
+            >
+              📹 Show your hand...
+            </div>
+            <!-- Circular progress ring -->
+            <svg
+              id="progress-ring"
+              style="position: absolute; top: 12px; right: 12px; display: none"
+              width="56"
+              height="56"
+            >
+              <circle
+                cx="28"
+                cy="28"
+                r="24"
+                fill="none"
+                stroke="rgba(255,255,255,0.3)"
+                stroke-width="3"
+              />
+              <circle
+                id="ring-fill"
+                cx="28"
+                cy="28"
+                r="24"
+                fill="none"
+                stroke="#10b981"
+                stroke-width="3"
+                stroke-dasharray="150.8"
+                stroke-dashoffset="150.8"
+                stroke-linecap="round"
+                transform="rotate(-90 28 28)"
+              />
+            </svg>
+          </div>
+          <canvas id="canvas"></canvas>
+          <button class="btn btn-next" id="btn-next" onclick="nextLetter()">
+            ✓ Next Letter →
+          </button>
+          <button class="btn btn-skip" onclick="skipLetter()">⏭️ Skip</button>
+          <div id="result"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const gujarati_map = {
+        A: "અ",
+        B: "બ",
+        C: "ક",
+        D: "ડ",
+        E: "એ",
+        F: "ફ",
+        G: "ગ",
+        H: "હ",
+        I: "ઇ",
+        J: "જ",
+        K: "ક",
+        L: "લ",
+        M: "મ",
+        N: "ન",
+        O: "ઓ",
+        P: "પ",
+        Q: "ક",
+        R: "ર",
+        S: "સ",
+        T: "ત",
+        U: "ઉ",
+        V: "વ",
+        W: "વ",
+        X: "ક્સ",
+        Y: "વાય",
+        Z: "ઝ",
+      };
+      const words_map = {
+        A: "આંબો (Mango)",
+        B: "બળદ (Ox)",
+        C: "ચંદ્ર (Moon)",
+        D: "દરવાજો (Door)",
+        E: "એકતા (Unity)",
+        F: "ફૂલ (Flower)",
+        G: "ગાય (Cow)",
+        H: "હાથ (Hand)",
+        I: "ઇમારત (Building)",
+        J: "જળ (Water)",
+        K: "કમળ (Lotus)",
+        L: "લીંબુ (Lemon)",
+        M: "માતા (Mother)",
+        N: "નદી (River)",
+        O: "ઓરડો (Room)",
+        P: "પાણી (Water)",
+        Q: "કતાર (Queue)",
+        R: "રસ્તો (Road)",
+        S: "સૂર્ય (Sun)",
+        T: "તારો (Star)",
+        U: "ઉજાસ (Light)",
+        V: "વૃક્ષ (Tree)",
+        W: "વાયુ (Wind)",
+        X: "અજ્ઞાત (Unknown)",
+        Y: "યુવાન (Youth)",
+        Z: "ઝાડ (Tree)",
+      };
+
+      const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+      const letters = [...allLetters].sort(() => Math.random() - 0.5);
+      let current = 0;
+      let scores = {};
+
+      // Auto-capture state
+      let holdStart = null;
+      let holdDuration = 2000; // hold hand steady for 2 seconds
+      let detecting = false;
+      let captured = false;
+      let animFrame = null;
+
+      function initProgress() {
+        const div = document.getElementById("progress");
+        div.innerHTML = "";
+        letters.forEach((l, i) => {
+          const dot = document.createElement("div");
+          dot.className = "dot" + (i === 0 ? " current" : "");
+          dot.textContent = l;
+          dot.id = `dot-${l}`;
+          div.appendChild(dot);
+        });
+      }
+
+      function updateProgress() {
+        letters.forEach((l, i) => {
+          const dot = document.getElementById(`dot-${l}`);
+          dot.className = "dot";
+          if (i === current) dot.classList.add("current");
+          else if (scores[l] === true) dot.classList.add("correct");
+          else if (scores[l] === false) dot.classList.add("wrong");
+        });
+      }
+
+      function loadLetter() {
+        const letter = letters[current];
+        document.getElementById("target-letter").textContent = letter;
+        document.getElementById("target-gujarati").textContent =
+          gujarati_map[letter] || "";
+        document.getElementById("target-word").textContent =
+          words_map[letter] || "";
+        const img = document.getElementById("target-img");
+        img.src = `/static/signs/${letter}.jpg`;
+        img.style.display = "block";
+        document.getElementById("result").style.display = "none";
+        document.getElementById("btn-next").style.display = "none";
+        resetHoldState();
+        updateProgress();
+        startDetectionLoop();
+      }
+
+      function resetHoldState() {
+        holdStart = null;
+        captured = false;
+        setRing(0);
+        document.getElementById("progress-ring").style.display = "none";
+        setStatus("📹 Show your hand...", "white");
+      }
+
+      function setStatus(text, color) {
+        const el = document.getElementById("status-overlay");
+        el.textContent = text;
+        el.style.color = color || "white";
+      }
+
+      function setRing(fraction) {
+        // fraction 0-1
+        const circumference = 150.8;
+        const offset = circumference - fraction * circumference;
+        document
+          .getElementById("ring-fill")
+          .setAttribute("stroke-dashoffset", offset);
+      }
+
+      async function startCamera() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: true,
+          });
+          document.getElementById("video").srcObject = stream;
+        } catch (e) {
+          alert("Camera access denied.");
+        }
+      }
+
+      function startDetectionLoop() {
+        if (animFrame) clearInterval(animFrame);
+        detecting = true;
+        animFrame = setInterval(checkFrame, 200);
+      }
+
+      function stopDetectionLoop() {
+        detecting = false;
+        if (animFrame) clearInterval(animFrame);
+      }
+
+      async function checkFrame() {
+        if (!detecting || captured) return;
+
+        const video = document.getElementById("video");
+        if (video.readyState < 2) return;
+
+        // Snapshot current frame
+        const canvas = document.getElementById("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0);
+
+        // Send to backend just to check if hand is present
+        canvas.toBlob(
+          async (blob) => {
+            if (!detecting || captured) return;
+
+            try {
+              const formData = new FormData();
+              formData.append("image", blob, "check.jpg");
+              formData.append("expected", letters[current]);
+
+              const res = await fetch("/check", {
+                method: "POST",
+                body: formData,
+              });
+              const data = await res.json();
+
+              if (data.message === "No hand detected") {
+                // Reset hold timer
+                holdStart = null;
+                setRing(0);
+                document.getElementById("progress-ring").style.display = "none";
+                setStatus("📹 Show your hand...", "white");
+              } else {
+                // Hand detected — start or continue hold timer
+                if (!holdStart) holdStart = Date.now();
+                const elapsed = Date.now() - holdStart;
+                const fraction = Math.min(elapsed / holdDuration, 1);
+                setRing(fraction);
+                document.getElementById("progress-ring").style.display =
+                  "block";
+
+                if (elapsed >= holdDuration) {
+                  // Auto capture!
+                  captured = true;
+                  stopDetectionLoop();
+                  showResult(data);
+                } else {
+                  const remaining = Math.ceil((holdDuration - elapsed) / 1000);
+                  setStatus(`⏱️ Hold steady... ${remaining}s`, "#a3e635");
+                }
+              }
+            } catch (e) {
+              // network error — ignore
+            }
+          },
+          "image/jpeg",
+          0.7,
+        );
+      }
+
+      function showResult(data) {
+        setRing(1);
+        const resultDiv = document.getElementById("result");
+        resultDiv.style.display = "block";
+        document.getElementById("btn-next").style.display = "block";
+
+        // Save progress
+        saveProgress(letters[current], data.correct, data.confidence);
+
+        if (data.correct) {
+          resultDiv.className = "correct";
+          resultDiv.textContent = `✨ Correct! (${data.confidence}%)`;
+          scores[letters[current]] = true;
+          setStatus("✨ Correct!", "#a3e635");
+          // Auto advance after 1.5 seconds on correct
+          setTimeout(() => {
+            if (current < letters.length - 1) nextLetter();
+          }, 1500);
+        } else {
+          resultDiv.className = "wrong";
+          resultDiv.textContent = `✗ ${data.message} (${data.confidence}%) — try again`;
+          scores[letters[current]] = false;
+          setStatus("❌ Wrong — try again", "#f87171");
+          // Allow retry after 2 seconds
+          setTimeout(() => {
+            resultDiv.style.display = "none";
+            document.getElementById("btn-next").style.display = "block";
+            resetHoldState();
+            startDetectionLoop();
+          }, 2000);
+        }
+
+        const correct = Object.values(scores).filter((v) => v === true).length;
+        const wrong = Object.values(scores).filter((v) => v === false).length;
+        document.getElementById("score-correct").textContent = correct;
+        document.getElementById("score-wrong").textContent = wrong;
+        document.getElementById("score-total").textContent = correct + wrong;
+        updateProgress();
+      }
+
+      function nextLetter() {
+        stopDetectionLoop();
+        if (current < letters.length - 1) {
+          current++;
+          loadLetter();
+        } else {
+          const correct = Object.values(scores).filter(
+            (v) => v === true,
+          ).length;
+          alert(`🎉 Practice complete! Score: ${correct}/26`);
+        }
+      }
+
+      function skipLetter() {
+        stopDetectionLoop();
+        if (current < letters.length - 1) {
+          current++;
+          loadLetter();
+        }
+      }
+
+      initProgress();
+      loadLetter();
+      startCamera();
+
+      function saveProgress(letter, correct, confidence) {
+        // Save per-letter score
+        const raw = localStorage.getItem("isl_progress");
+        const progress = raw ? JSON.parse(raw) : {};
+        if (!progress[letter]) progress[letter] = { correct: 0, wrong: 0 };
+        if (correct) progress[letter].correct++;
+        else progress[letter].wrong++;
+        localStorage.setItem("isl_progress", JSON.stringify(progress));
+
+        // Save activity log
+        const activity = JSON.parse(
+          localStorage.getItem("isl_activity") || "[]",
+        );
+        activity.push({
+          letter,
+          correct,
+          confidence,
+          time: new Date().toLocaleTimeString(),
+        });
+        // Keep last 50 entries only
+        if (activity.length > 50) activity.shift();
+        localStorage.setItem("isl_activity", JSON.stringify(activity));
+      }
+    </script>
+  </body>
+</html>

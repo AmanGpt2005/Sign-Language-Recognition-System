@@ -1,0 +1,6 @@
+flask
+mediapipe==0.10.30
+opencv-python-headless
+numpy
+pickle5
+tensorflow

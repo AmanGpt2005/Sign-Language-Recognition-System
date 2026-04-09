@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress Dashboard</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #ffffff;
+        padding: 2rem;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 32px;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+        font-weight: 700;
+      }
+
+      p.sub {
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+      }
+
+      .container {
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      .back-btn {
+        display: inline-block;
+        margin-bottom: 2rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+      }
+
+      /* Summary cards */
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 2.5rem;
+      }
+
+      .summary-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        padding: 1.75rem;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+        transition: all 0.3s ease;
+      }
+
+      .summary-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+      }
+
+      .summary-num {
+        font-size: 40px;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+      }
+
+      .summary-label {
+        font-size: 14px;
+        color: #64748b;
+        font-weight: 600;
+      }
+
+      .num-green {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .num-red {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .num-blue {
+        background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .num-orange {
+        background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Progress bar */
+      .progress-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .progress-bar-wrap {
+        background: #f1f5f9;
+        border-radius: 99px;
+        height: 14px;
+        overflow: hidden;
+        margin-bottom: 0.75rem;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .progress-bar-fill {
+        height: 100%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 20px rgba(245, 87, 108, 0.5);
+      }
+
+      .progress-label {
+        font-size: 13px;
+        color: #64748b;
+        text-align: right;
+        font-weight: 600;
+      }
+
+      /* Letter grid */
+      .letter-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 12px;
+        margin-bottom: 1.5rem;
+      }
+
+      .letter-tile {
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        padding: 1rem 0.75rem;
+        text-align: center;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+
+      .letter-tile:hover {
+        transform: translateY(-5px);
+        border-color: #667eea;
+        background: rgba(240, 244, 255, 0.9);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+      }
+
+      .letter-tile .tile-letter {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+      }
+
+      .letter-tile .tile-gujarati {
+        font-size: 16px;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+      }
+
+      .letter-tile .tile-count {
+        font-size: 11px;
+        color: #94a3b8;
+        font-weight: 600;
+      }
+
+      .letter-tile.mastered {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border-color: #10b981;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+      }
+
+      .letter-tile.struggling {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        border-color: #ef4444;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+      }
+
+      .letter-tile .badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        font-size: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+      }
+
+      .badge-correct {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        color: white;
+      }
+      .badge-wrong {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        color: white;
+      }
+
+      /* Recent activity */
+      .activity-list {
+        list-style: none;
+      }
+
+      .activity-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .activity-item:hover {
+        background: rgba(102, 126, 234, 0.05);
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        border-radius: 8px;
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        box-shadow: 0 0 8px currentColor;
+      }
+
+      .dot-correct {
+        background: #10b981;
+      }
+      .dot-wrong {
+        background: #ef4444;
+      }
+
+      .activity-time {
+        color: #94a3b8;
+        font-size: 13px;
+        margin-left: auto;
+        font-weight: 600;
+      }
+
+      /* Reset button */
+      .reset-btn {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        border: none;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+      }
+
+      .reset-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+      }
+
+      .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+      }
+
+      @media (max-width: 600px) {
+        .summary {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .header-actions {
+          flex-direction: column;
+          gap: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📊 Progress Dashboard</h1>
+      <p class="sub">Track your ISL learning progress</p>
+
+      <div class="header-actions">
+        <a href="/" class="back-btn">← Back to Predictor</a>
+        <button class="reset-btn" onclick="resetProgress()">
+          🔄 Reset Progress
+        </button>
+      </div>
+
+      <!-- Summary -->
+      <div class="summary">
+        <div class="summary-card">
+          <div class="summary-num num-green" id="total-correct">0</div>
+          <div class="summary-label">Correct</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num num-red" id="total-wrong">0</div>
+          <div class="summary-label">Wrong</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num num-blue" id="total-mastered">0</div>
+          <div class="summary-label">Mastered</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-num num-purple" id="total-attempts">0</div>
+          <div class="summary-label">Total Attempts</div>
+        </div>
+      </div>
+
+      <!-- Overall progress bar -->
+      <div class="progress-section">
+        <div class="section-title">🎯 Overall Progress</div>
+        <div class="progress-bar-wrap">
+          <div
+            class="progress-bar-fill"
+            id="overall-bar"
+            style="width: 0%"
+          ></div>
+        </div>
+        <div class="progress-label" id="overall-label">
+          0 / 26 letters mastered
+        </div>
+      </div>
+
+      <!-- Letter grid -->
+      <div class="progress-section">
+        <div class="section-title">📝 Letter Breakdown</div>
+        <div class="letter-grid" id="letter-grid"></div>
+      </div>
+
+      <!-- Recent activity -->
+      <div class="progress-section">
+        <div class="section-title">⏱️ Recent Activity</div>
+        <ul class="activity-list" id="activity-list">
+          <li class="activity-item" style="color: #94a3b8">
+            No activity yet — start practicing!
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      const gujarati_letters = {
+        A: "અ",
+        B: "બ",
+        C: "ક",
+        D: "ડ",
+        E: "એ",
+        F: "ફ",
+        G: "ગ",
+        H: "હ",
+        I: "ઇ",
+        J: "જ",
+        K: "ક",
+        L: "લ",
+        M: "મ",
+        N: "ન",
+        O: "ઓ",
+        P: "પ",
+        Q: "ક",
+        R: "ર",
+        S: "સ",
+        T: "ત",
+        U: "ઉ",
+        V: "વ",
+        W: "વ",
+        X: "ક્સ",
+        Y: "વાય",
+        Z: "ઝ",
+      };
+
+      function loadDashboard() {
+        const raw = localStorage.getItem("isl_progress");
+        const progress = raw ? JSON.parse(raw) : {};
+        const activity = JSON.parse(
+          localStorage.getItem("isl_activity") || "[]",
+        );
+
+        let totalCorrect = 0,
+          totalWrong = 0,
+          mastered = 0,
+          attempts = 0;
+
+        // Letter grid
+        const grid = document.getElementById("letter-grid");
+        grid.innerHTML = "";
+
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach((letter) => {
+          const data = progress[letter] || { correct: 0, wrong: 0 };
+          totalCorrect += data.correct;
+          totalWrong += data.wrong;
+          attempts += data.correct + data.wrong;
+
+          const isMastered = data.correct >= 3 && data.correct > data.wrong;
+          const isStruggling = data.wrong > data.correct && data.wrong > 0;
+          if (isMastered) mastered++;
+
+          const tile = document.createElement("div");
+          tile.className =
+            "letter-tile" +
+            (isMastered ? " mastered" : "") +
+            (isStruggling ? " struggling" : "");
+
+          tile.innerHTML = `
+        <div class="tile-letter">${letter}</div>
+        <div class="tile-gujarati">${gujarati_letters[letter]}</div>
+        <div class="tile-count">${data.correct}✓ ${data.wrong}✗</div>
+        ${isMastered ? '<div class="badge badge-correct">✓</div>' : ""}
+        ${isStruggling ? '<div class="badge badge-wrong">!</div>' : ""}
+      `;
+          grid.appendChild(tile);
+        });
+
+        // Summary
+        document.getElementById("total-correct").textContent = totalCorrect;
+        document.getElementById("total-wrong").textContent = totalWrong;
+        document.getElementById("total-mastered").textContent = mastered;
+        document.getElementById("total-attempts").textContent = attempts;
+
+        // Progress bar
+        const pct = Math.round((mastered / 26) * 100);
+        document.getElementById("overall-bar").style.width = pct + "%";
+        document.getElementById("overall-label").textContent =
+          `${mastered} / 26 letters mastered`;
+
+        // Recent activity
+        const list = document.getElementById("activity-list");
+        if (activity.length === 0) {
+          list.innerHTML =
+            '<li class="activity-item" style="color:#94a3b8">No activity yet — start practicing!</li>';
+        } else {
+          list.innerHTML = "";
+          activity
+            .slice(-10)
+            .reverse()
+            .forEach((item) => {
+              const li = document.createElement("li");
+              li.className = "activity-item";
+              li.innerHTML = `
+          <div class="activity-dot ${item.correct ? "dot-correct" : "dot-wrong"}"></div>
+          <span>Signed <strong>${item.letter}</strong> — ${item.correct ? "✓ Correct" : "✗ Wrong"} (${item.confidence}%)</span>
+          <span class="activity-time">${item.time}</span>
+        `;
+              list.appendChild(li);
+            });
+        }
+      }
+
+      function resetProgress() {
+        if (confirm("🗑️ Reset all progress? This cannot be undone.")) {
+          localStorage.removeItem("isl_progress");
+          localStorage.removeItem("isl_activity");
+          loadDashboard();
+        }
+      }
+
+      loadDashboard();
+    </script>
+  </body>
+</html>

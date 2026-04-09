@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn ISL Alphabets</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #ffffff;
+        padding: 2rem;
+        min-height: 100vh;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 32px;
+        margin-bottom: 0.5rem;
+        color: #1e293b;
+        font-weight: 700;
+      }
+
+      p.sub {
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        margin-bottom: 2rem;
+        font-weight: 500;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .back-btn {
+        display: inline-block;
+        margin-bottom: 2rem;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #fda085 0%, #f6d365 100%);
+        color: white;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(253, 160, 133, 0.4);
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(253, 160, 133, 0.6);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 20px;
+        margin-bottom: 2rem;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        padding: 1.25rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(20px);
+      }
+
+      .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(253, 160, 133, 0.3);
+        border-color: rgba(253, 160, 133, 0.5);
+      }
+
+      .card.active {
+        border: 2px solid #667eea;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 100%);
+      }
+
+      .card img {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 4px 12px rgba(0, 107, 179, 0.15);
+      }
+
+      .card .english {
+        font-size: 28px;
+        font-weight: 700;
+        color: #0369a1;
+        margin-bottom: 0.5rem;
+      }
+
+      .card .gujarati {
+        font-size: 22px;
+        color: #10b981;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      .card .word {
+        font-size: 12px;
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      /* Detail panel */
+      #detail {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 100;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(4px);
+      }
+
+      #detail.show {
+        display: flex;
+      }
+
+      .detail-card {
+        background: rgba(255, 255, 255, 0.98);
+        border-radius: 24px;
+        padding: 2.5rem;
+        max-width: 420px;
+        width: 90%;
+        text-align: center;
+        position: relative;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+        animation: slideUp 0.3s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .detail-card img {
+        width: 100%;
+        border-radius: 16px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0, 107, 179, 0.2);
+      }
+
+      .detail-card .big-letter {
+        font-size: 56px;
+        font-weight: 700;
+        color: #0369a1;
+        margin-bottom: 0.5rem;
+      }
+
+      .detail-card .big-gujarati {
+        font-size: 42px;
+        color: #10b981;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      .detail-card .big-word {
+        font-size: 16px;
+        color: #64748b;
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #cbd5e1;
+        background: none;
+        border: none;
+        transition: all 0.2s ease;
+      }
+
+      .close-btn:hover {
+        color: #64748b;
+        transform: rotate(90deg);
+      }
+
+      .nav-btns {
+        display: flex;
+        gap: 12px;
+        margin-top: 1.5rem;
+      }
+
+      .nav-btns button {
+        flex: 1;
+        padding: 0.85rem;
+        border: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+      }
+
+      .nav-btns button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>📚 ISL Alphabet Learning</h1>
+      <p class="sub">Click any letter to learn its sign</p>
+      <a href="/" class="back-btn">← Back to Predictor</a>
+
+      <div class="grid">
+        {% for item in letters %}
+        <div class="card" onclick="showDetail({{ loop.index0 }})">
+          <img
+            src="{{ url_for('static', filename=item.image) }}"
+            alt="ISL sign for {{ item.english }}"
+            onerror="this.style.display = 'none'"
+          />
+          <div class="english">{{ item.english }}</div>
+          <div class="gujarati">{{ item.gujarati }}</div>
+          <div class="word">{{ item.gujarati_word }}</div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Detail Modal -->
+      <div id="detail">
+        <div class="detail-card">
+          <button class="close-btn" onclick="closeDetail()">✕</button>
+          <img id="d-img" src="" alt="sign" />
+          <div class="big-letter" id="d-letter"></div>
+          <div class="big-gujarati" id="d-gujarati"></div>
+          <div class="big-word" id="d-word"></div>
+          <div class="nav-btns">
+            <button onclick="navigate(-1)">← Previous</button>
+            <button onclick="navigate(1)">Next →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const letters = {{ letters | tojson }};
+      let current = 0;
+
+      function showDetail(idx) {
+        current = idx;
+        const item = letters[idx];
+        document.getElementById('d-img').src = '/static/' + item.image;
+        document.getElementById('d-letter').textContent = item.english;
+        document.getElementById('d-gujarati').textContent = item.gujarati;
+        document.getElementById('d-word').textContent = item.gujarati_word;
+        document.getElementById('detail').classList.add('show');
+        document.querySelectorAll('.card').forEach((c,i) => c.classList.toggle('active', i===idx));
+      }
+
+      function closeDetail() {
+        document.getElementById('detail').classList.remove('show');
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      }
+
+      function navigate(dir) {
+        current = (current + dir + letters.length) % letters.length;
+        const item = letters[current];
+        document.getElementById('d-img').src = '/static/' + item.image;
+        document.getElementById('d-letter').textContent = item.english;
+        document.getElementById('d-gujarati').textContent = item.gujarati;
+        document.getElementById('d-word').textContent = item.gujarati_word;
+        document.querySelectorAll('.card').forEach((c,i) => c.classList.toggle('active', i===current));
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if(!document.getElementById('detail').classList.contains('show')) return;
+        if(e.key === 'ArrowLeft') navigate(-1);
+        if(e.key === 'ArrowRight') navigate(1);
+        if(e.key === 'Escape') closeDetail();
+      });
+    </script>
+  </body>
+</html>
